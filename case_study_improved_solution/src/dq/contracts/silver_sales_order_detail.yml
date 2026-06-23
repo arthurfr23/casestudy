@@ -1,0 +1,15 @@
+table: case_study.silver.sales_order_detail
+layer: silver
+checks:
+  - name: row_count
+    type: row_count
+    min_rows: 1
+  - name: pk_not_null
+    type: not_null
+    columns: [SalesOrderDetailID]
+  - name: pk_unique
+    type: unique
+    columns: [SalesOrderDetailID]
+  - name: unit_price_not_null
+    type: expression
+    expr: "UnitPrice IS NOT NULL"

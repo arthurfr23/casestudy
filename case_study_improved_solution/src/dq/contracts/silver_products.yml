@@ -1,0 +1,12 @@
+table: case_study.silver.products
+layer: silver
+checks:
+  - name: row_count
+    type: row_count
+    min_rows: 1
+  - name: pk_not_null
+    type: not_null
+    columns: [ProductID]
+  - name: pk_unique
+    type: unique
+    columns: [ProductID]

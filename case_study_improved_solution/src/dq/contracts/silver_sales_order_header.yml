@@ -1,0 +1,15 @@
+table: case_study.silver.sales_order_header
+layer: silver
+checks:
+  - name: row_count
+    type: row_count
+    min_rows: 1
+  - name: pk_not_null
+    type: not_null
+    columns: [SalesOrderID]
+  - name: pk_unique
+    type: unique
+    columns: [SalesOrderID]
+  - name: ship_after_order
+    type: expression
+    expr: "ShipDate IS NULL OR OrderDate IS NULL OR ShipDate >= OrderDate"

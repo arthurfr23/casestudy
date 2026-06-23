@@ -1,0 +1,18 @@
+table: case_study.gold.publish_orders
+layer: gold
+checks:
+  - name: row_count
+    type: row_count
+    min_rows: 1
+  - name: pk_not_null
+    type: not_null
+    columns: [SalesOrderDetailID]
+  - name: pk_unique
+    type: unique
+    columns: [SalesOrderDetailID]
+  - name: lead_time_not_negative
+    type: expression
+    expr: "LeadTimeInBusinessDays >= 0"
+  - name: extended_price_not_null
+    type: expression
+    expr: "TotalLineExtendedPrice IS NOT NULL"

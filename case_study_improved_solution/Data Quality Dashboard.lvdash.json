@@ -1,0 +1,698 @@
+{
+  "datasets": [
+    {
+      "name": "6bf18a50",
+      "displayName": "dq_control",
+      "config": {
+        "version": "1.1",
+        "source": "case_study.gold.dq_control",
+        "dimensions": [
+          {
+            "name": "check_name",
+            "expr": "source.check_name",
+            "displayName": "Check Name"
+          },
+          {
+            "name": "check_type",
+            "expr": "source.check_type",
+            "displayName": "Check Type"
+          },
+          {
+            "name": "checked_at",
+            "expr": "source.checked_at",
+            "displayName": "Checked At"
+          },
+          {
+            "name": "checked_ts",
+            "expr": "CAST(source.checked_at AS TIMESTAMP)",
+            "displayName": "Checked Timestamp"
+          },
+          {
+            "name": "checked_day",
+            "expr": "DATE_TRUNC('DAY', CAST(source.checked_at AS TIMESTAMP))",
+            "displayName": "Checked Day"
+          },
+          {
+            "name": "failed_rows",
+            "expr": "source.failed_rows",
+            "displayName": "Failed Rows"
+          },
+          {
+            "name": "layer",
+            "expr": "source.layer",
+            "displayName": "Layer"
+          },
+          {
+            "name": "status",
+            "expr": "source.status",
+            "displayName": "Status"
+          },
+          {
+            "name": "table_name",
+            "expr": "source.table_name",
+            "displayName": "Table Name"
+          },
+          {
+            "name": "total_rows",
+            "expr": "source.total_rows",
+            "displayName": "Total Rows"
+          }
+        ],
+        "measures": [
+          {
+            "name": "count",
+            "expr": "COUNT(*)",
+            "comment": "Represents the total number of rows in the dataset.",
+            "displayName": "Count"
+          },
+          {
+            "name": "total_checks",
+            "expr": "COUNT(*)",
+            "displayName": "Total Checks",
+            "comment": "Total number of executed checks."
+          },
+          {
+            "name": "failed_checks",
+            "expr": "SUM(CASE WHEN source.status = 'FAIL' THEN 1 ELSE 0 END)",
+            "displayName": "Failed Checks",
+            "comment": "Total number of failed checks."
+          },
+          {
+            "name": "passed_checks",
+            "expr": "SUM(CASE WHEN source.status = 'PASS' THEN 1 ELSE 0 END)",
+            "displayName": "Passed Checks",
+            "comment": "Total number of passed checks."
+          },
+          {
+            "name": "total_failed_rows",
+            "expr": "SUM(source.failed_rows)",
+            "displayName": "Total Failed Rows",
+            "comment": "Sum of failed rows across checks."
+          },
+          {
+            "name": "total_rows_checked",
+            "expr": "SUM(source.total_rows)",
+            "displayName": "Total Rows Checked",
+            "comment": "Sum of rows evaluated across checked tables."
+          },
+          {
+            "name": "failure_rate",
+            "expr": "MEASURE(failed_checks) * 1.0 / NULLIF(MEASURE(total_checks), 0)",
+            "displayName": "Failure Rate",
+            "comment": "Percentage of checks that failed."
+          }
+        ]
+      }
+    }
+  ],
+  "pages": [
+    {
+      "name": "e8a7dc99",
+      "displayName": "Overview",
+      "layout": [
+        {
+          "widget": {
+            "name": "total_checks_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "measure(total_checks)",
+                      "expression": "MEASURE(`total_checks`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Total Checks",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(total_checks)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "failed_checks_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "measure(failed_checks)",
+                      "expression": "MEASURE(`failed_checks`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Failed Checks",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(failed_checks)"
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 3,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "failure_rate_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "measure(failure_rate)",
+                      "expression": "MEASURE(`failure_rate`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Check Failure Rate",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(failure_rate)",
+                  "format": {
+                    "type": "number-percent",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 1
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "failed_rows_counter",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "measure(total_failed_rows)",
+                      "expression": "MEASURE(`total_failed_rows`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Failed Rows",
+                "showTitle": true
+              },
+              "widgetType": "counter",
+              "encodings": {
+                "value": {
+                  "fieldName": "measure(total_failed_rows)",
+                  "format": {
+                    "type": "number-plain",
+                    "abbreviation": "compact",
+                    "decimalPlaces": {
+                      "type": "exact",
+                      "places": 0
+                    }
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 9,
+            "y": 0,
+            "width": 3,
+            "height": 3
+          }
+        },
+        {
+          "widget": {
+            "name": "failures_by_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "table_name",
+                      "expression": "`table_name`"
+                    },
+                    {
+                      "name": "measure(failed_checks)",
+                      "expression": "MEASURE(`failed_checks`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Failed Checks by Table",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "table_name",
+                  "axis": {
+                    "title": "Table Name"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(failed_checks)",
+                  "axis": {
+                    "title": "Failed Checks"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "table_name",
+                  "legend": {
+                    "title": "Table Name"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 3,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "checks_by_status",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "status",
+                      "expression": "`status`"
+                    },
+                    {
+                      "name": "measure(total_checks)",
+                      "expression": "MEASURE(`total_checks`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Checks by Status",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "status",
+                  "axis": {
+                    "title": "Status"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(total_checks)",
+                  "axis": {
+                    "title": "Checks"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "status",
+                  "legend": {
+                    "title": "Status"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 3,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "check_history",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "measure(total_checks)",
+                      "expression": "MEASURE(`total_checks`)"
+                    },
+                    {
+                      "name": "checked_day",
+                      "expression": "`checked_day`"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Daily Check Trend",
+                "showTitle": true
+              },
+              "widgetType": "line",
+              "encodings": {
+                "x": {
+                  "fieldName": "checked_day",
+                  "axis": {
+                    "title": "Day"
+                  },
+                  "scale": {
+                    "type": "temporal"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(total_checks)",
+                  "axis": {
+                    "title": "Checks"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "measure(total_checks)",
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "checks_by_layer",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "layer",
+                      "expression": "`layer`"
+                    },
+                    {
+                      "name": "measure(total_checks)",
+                      "expression": "MEASURE(`total_checks`)"
+                    }
+                  ],
+                  "disaggregated": false
+                }
+              }
+            ],
+            "spec": {
+              "version": 3,
+              "frame": {
+                "title": "Checks by Layer",
+                "showTitle": true
+              },
+              "widgetType": "bar",
+              "encodings": {
+                "x": {
+                  "fieldName": "layer",
+                  "axis": {
+                    "title": "Layer"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                },
+                "y": {
+                  "fieldName": "measure(total_checks)",
+                  "axis": {
+                    "title": "Checks"
+                  },
+                  "scale": {
+                    "type": "quantitative"
+                  }
+                },
+                "color": {
+                  "fieldName": "layer",
+                  "legend": {
+                    "title": "Layer"
+                  },
+                  "scale": {
+                    "type": "categorical"
+                  }
+                }
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 6,
+            "y": 8,
+            "width": 6,
+            "height": 5
+          }
+        },
+        {
+          "widget": {
+            "name": "failing_checks_table",
+            "queries": [
+              {
+                "name": "main_query",
+                "query": {
+                  "datasetName": "6bf18a50",
+                  "fields": [
+                    {
+                      "name": "checked_at",
+                      "expression": "`checked_at`"
+                    },
+                    {
+                      "name": "table_name",
+                      "expression": "`table_name`"
+                    },
+                    {
+                      "name": "layer",
+                      "expression": "`layer`"
+                    },
+                    {
+                      "name": "check_name",
+                      "expression": "`check_name`"
+                    },
+                    {
+                      "name": "check_type",
+                      "expression": "`check_type`"
+                    },
+                    {
+                      "name": "status",
+                      "expression": "`status`"
+                    },
+                    {
+                      "name": "failed_rows",
+                      "expression": "`failed_rows`"
+                    },
+                    {
+                      "name": "total_rows",
+                      "expression": "`total_rows`"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "expression": "`status` IN ('FAIL')"
+                    }
+                  ],
+                  "disaggregated": true
+                }
+              }
+            ],
+            "spec": {
+              "version": 2,
+              "frame": {
+                "title": "Failed Check Records",
+                "showTitle": true
+              },
+              "widgetType": "table",
+              "encodings": {
+                "columns": [
+                  {
+                    "fieldName": "checked_at",
+                    "useForSearch": true,
+                    "displayName": "Checked At"
+                  },
+                  {
+                    "fieldName": "table_name",
+                    "useForSearch": true,
+                    "displayName": "Table Name"
+                  },
+                  {
+                    "fieldName": "layer",
+                    "useForSearch": true,
+                    "displayName": "Layer"
+                  },
+                  {
+                    "fieldName": "check_name",
+                    "useForSearch": true,
+                    "displayName": "Check Name"
+                  },
+                  {
+                    "fieldName": "check_type",
+                    "useForSearch": true,
+                    "displayName": "Check Type"
+                  },
+                  {
+                    "fieldName": "status",
+                    "useForSearch": true,
+                    "displayName": "Status"
+                  },
+                  {
+                    "fieldName": "failed_rows",
+                    "useForSearch": false,
+                    "displayName": "Failed Rows"
+                  },
+                  {
+                    "fieldName": "total_rows",
+                    "useForSearch": false,
+                    "displayName": "Total Rows"
+                  }
+                ]
+              },
+              "data": {
+                "queryName": "main_query"
+              }
+            }
+          },
+          "position": {
+            "x": 0,
+            "y": 13,
+            "width": 12,
+            "height": 6
+          }
+        }
+      ],
+      "pageType": "PAGE_TYPE_CANVAS",
+      "layoutVersion": "GRID_V1"
+    }
+  ],
+  "uiSettings": {
+    "theme": {
+      "widgetHeaderAlignment": "ALIGNMENT_UNSPECIFIED"
+    },
+    "applyModeEnabled": false
+  }
+}

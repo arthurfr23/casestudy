@@ -1,0 +1,15 @@
+table: case_study.gold.publish_product
+layer: gold
+checks:
+  - name: row_count
+    type: row_count
+    min_rows: 1
+  - name: pk_not_null
+    type: not_null
+    columns: [ProductID]
+  - name: color_not_null
+    type: expression
+    expr: "Color IS NOT NULL"
+  - name: valid_category
+    type: expression
+    expr: "ProductCategoryName IS NULL OR ProductCategoryName IN ('Accessories','Bikes','Clothing','Components')"
